@@ -97,6 +97,7 @@ class DashboardStatsView @JvmOverloads constructor(ctx: Context, attrs: Attribut
         }
 
     private val fadeHandler = Handler()
+    private var statsListener: DashboardStatsListener? = null
 
     fun initView(
         period: StatsGranularity = DEFAULT_STATS_GRANULARITY,
@@ -106,6 +107,7 @@ class DashboardStatsView @JvmOverloads constructor(ctx: Context, attrs: Attribut
     ) {
         this.selectedSite = selectedSite
         this.formatCurrencyForDisplay = formatCurrencyForDisplay
+        this.statsListener = listener
 
         StatsGranularity.values().forEach { granularity ->
             val tab = tab_layout.newTab().apply {
@@ -128,7 +130,7 @@ class DashboardStatsView @JvmOverloads constructor(ctx: Context, attrs: Attribut
                         mapOf(AnalyticsTracker.KEY_RANGE to tab.tag.toString().toLowerCase()))
 
                 isRequestingStats = true
-                listener.onRequestLoadStats(tab.tag as StatsGranularity)
+                statsListener?.onRequestLoadStats(tab.tag as StatsGranularity)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -143,6 +145,10 @@ class DashboardStatsView @JvmOverloads constructor(ctx: Context, attrs: Attribut
             updateRecencyMessage()
             lastUpdatedHandler?.postDelayed(lastUpdatedRunnable, UPDATE_DELAY_TIME_MS)
         }
+    }
+
+    fun removeListener() {
+        statsListener = null
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {

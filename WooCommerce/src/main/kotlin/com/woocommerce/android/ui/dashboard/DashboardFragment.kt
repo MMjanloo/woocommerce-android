@@ -155,6 +155,7 @@ class DashboardFragment : TopLevelFragment(), DashboardContract.View, DashboardS
     }
 
     override fun onDestroyView() {
+        dashboard_stats.removeListener()
         presenter.dropView()
         super.onDestroyView()
     }
